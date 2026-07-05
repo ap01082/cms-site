@@ -125,6 +125,7 @@ a{color:var(--brand);text-decoration:none}
 </div>
 </div>
 <button class="btn btn-primary" onclick="openEditor()">+ 添加项目</button>
+<button class="btn btn-outline" onclick="openSiteEditor()">⚙️ 站点信息</button>
 </div>
 
 <div class="project-list" id="projectList"></div>
@@ -135,6 +136,90 @@ a{color:var(--brand);text-decoration:none}
 <button class="btn btn-outline" onclick="loadFromGitHub()">📡 从GitHub同步</button>
 </div>
 
+</div>
+</div>
+
+<!-- Editor Modal -->
+</div>
+</div>
+
+<!-- Site Info Editor Modal -->
+<div id="siteModal" class="modal-overlay hidden">
+<div class="modal">
+<h2>编辑站点信息</h2>
+
+<div class="form-row">
+<div class="form-group">
+<label>标题前缀</label>
+<input type="text" id="editTitleBefore" placeholder="为 fnOS 打造的">
+</div>
+<div class="form-group">
+<label>渐变文字</label>
+<input type="text" id="editTitleGradient" placeholder="原生应用生态">
+</div>
+</div>
+
+<div class="form-group">
+<label>副标题</label>
+<textarea id="editSubtitle" placeholder="站点描述..."></textarea>
+</div>
+
+<div class="form-row">
+<div class="form-group">
+<label>主按钮文字</label>
+<input type="text" id="editPrimaryBtn" placeholder="开始浏览文档">
+</div>
+<div class="form-group">
+<label>副按钮文字</label>
+<input type="text" id="editSecondaryBtn" placeholder="访问 GitHub">
+</div>
+</div>
+
+<div class="form-group">
+<label>GitHub 链接</label>
+<input type="text" id="editGithubUrl" placeholder="https://github.com/ap01082">
+</div>
+
+<div class="form-group">
+<label>区块标题</label>
+<input type="text" id="editSectionTitle" placeholder="已适配应用">
+</div>
+
+<div class="form-group">
+<label>更多项目按钮</label>
+<input type="text" id="editMoreProjects" placeholder="查看更多项目">
+</div>
+
+<div class="form-group">
+<label>CTA 标题</label>
+<input type="text" id="editCtaTitle" placeholder="想要了解更多项目？">
+</div>
+
+<div class="form-group">
+<label>CTA 描述</label>
+<textarea id="editCtaDesc" placeholder="CTA 描述..."></textarea>
+</div>
+
+<div class="form-row">
+<div class="form-group">
+<label>CTA 主按钮</label>
+<input type="text" id="editCtaPrimary" placeholder="浏览所有文档">
+</div>
+<div class="form-group">
+<label>CTA 副按钮</label>
+<input type="text" id="editCtaSecondary" placeholder="提交适配建议">
+</div>
+</div>
+
+<div class="form-group">
+<label>页脚文字</label>
+<input type="text" id="editFooter" placeholder="© 2026 纪年 版权所有">
+</div>
+
+<div class="modal-actions">
+<button class="btn btn-outline" onclick="closeSiteEditor()">取消</button>
+<button class="btn btn-primary" onclick="saveSiteInfo()">保存</button>
+</div>
 </div>
 </div>
 
@@ -197,6 +282,7 @@ a{color:var(--brand);text-decoration:none}
 // State
 let token = localStorage.getItem('gh_token') || ''
 let projects = []
+let siteInfo = {}
 let hasChanges = false
 let editingIndex = -1
 const REPO_OWNER = 'ap01082'
@@ -227,6 +313,7 @@ async function loadLocalData() {
     if (!res.ok) return showToast('本地数据加载失败', 'error')
     const data = await res.json()
     projects = data.projects || []
+    siteInfo = data.siteInfo || {}
     hasChanges = false
     renderProjects()
   } catch(e) {
@@ -287,6 +374,7 @@ async function loadFromGitHub() {
     const d = await res.json()
     const content = JSON.parse(atob(d.content))
     projects = content.projects || []
+    siteInfo = content.siteInfo || {}
     hasChanges = false
     renderProjects()
     showToast('已从GitHub加载数据')
@@ -299,7 +387,7 @@ async function commitChanges() {
   if (!token) return showToast('请先连接 GitHub 才能提交更改', 'error')
   if (!hasChanges) return showToast('没有需要提交的更改')
 
-  const content = JSON.stringify({ projects }, null, 2)
+  const content = JSON.stringify({ projects, siteInfo }, null, 2)
   try {
     // Get current file to get SHA
     let sha = ''
@@ -444,9 +532,54 @@ function showToast(msg, type = 'success') {
   setTimeout(() => t.remove(), 3000)
 }
 
-// Click outside modal to close
+function openSiteEditor() {
+  document.getElementById('siteModal').classList.remove('hidden')
+  document.getElementById('editTitleBefore').value = siteInfo.titleBefore || ''
+  document.getElementById('editTitleGradient').value = siteInfo.titleGradient || ''
+  document.getElementById('editSubtitle').value = siteInfo.subtitle || ''
+  document.getElementById('editPrimaryBtn').value = siteInfo.primaryButton || ''
+  document.getElementById('editSecondaryBtn').value = siteInfo.secondaryButton || ''
+  document.getElementById('editGithubUrl').value = siteInfo.githubUrl || ''
+  document.getElementById('editSectionTitle').value = siteInfo.sectionTitle || ''
+  document.getElementById('editMoreProjects').value = siteInfo.moreProjects || ''
+  document.getElementById('editCtaTitle').value = siteInfo.ctaTitle || ''
+  document.getElementById('editCtaDesc').value = siteInfo.ctaDesc || ''
+  document.getElementById('editCtaPrimary').value = siteInfo.ctaPrimary || ''
+  document.getElementById('editCtaSecondary').value = siteInfo.ctaSecondary || ''
+  document.getElementById('editFooter').value = siteInfo.footerText || ''
+}
+
+function closeSiteEditor() {
+  document.getElementById('siteModal').classList.add('hidden')
+}
+
+function saveSiteInfo() {
+  siteInfo = {
+    titleBefore: document.getElementById('editTitleBefore').value.trim(),
+    titleGradient: document.getElementById('editTitleGradient').value.trim(),
+    subtitle: document.getElementById('editSubtitle').value.trim(),
+    primaryButton: document.getElementById('editPrimaryBtn').value.trim(),
+    secondaryButton: document.getElementById('editSecondaryBtn').value.trim(),
+    githubUrl: document.getElementById('editGithubUrl').value.trim(),
+    sectionTitle: document.getElementById('editSectionTitle').value.trim(),
+    moreProjects: document.getElementById('editMoreProjects').value.trim(),
+    ctaTitle: document.getElementById('editCtaTitle').value.trim(),
+    ctaDesc: document.getElementById('editCtaDesc').value.trim(),
+    ctaPrimary: document.getElementById('editCtaPrimary').value.trim(),
+    ctaSecondary: document.getElementById('editCtaSecondary').value.trim(),
+    footerText: document.getElementById('editFooter').value.trim()
+  }
+  hasChanges = true
+  closeSiteEditor()
+  showToast('站点信息已保存（本地），点击"提交更改到GitHub"生效')
+}
+
+// Click outside modals to close
 document.getElementById('editorModal').addEventListener('click', function(e) {
   if (e.target === this) closeEditor()
+})
+document.getElementById('siteModal').addEventListener('click', function(e) {
+  if (e.target === this) closeSiteEditor()
 })
 </script>
 
