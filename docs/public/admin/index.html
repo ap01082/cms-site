@@ -216,6 +216,36 @@ a{color:var(--brand);text-decoration:none}
 <input type="text" id="editFooter" placeholder="© 2026 纪年 版权所有">
 </div>
 
+<div class="form-row">
+<div class="form-group">
+<label>备案号</label>
+<input type="text" id="editIcpRecord" placeholder="粤ICP备XXXXXXXX号">
+</div>
+<div class="form-group">
+<label>备案链接</label>
+<input type="text" id="editIcpUrl" placeholder="https://beian.miit.gov.cn">
+</div>
+</div>
+
+<div class="form-row">
+<div class="form-group">
+<label>显示右下角图标</label>
+<select id="editShowBottom">
+<option value="true">显示</option>
+<option value="false">隐藏</option>
+</select>
+</div>
+<div class="form-group">
+<label>图标名称</label>
+<input type="text" id="editBottomTitle" placeholder="GitHub">
+</div>
+</div>
+
+<div class="form-group">
+<label>图标链接</label>
+<input type="text" id="editBottomUrl" placeholder="https://github.com/ap01082">
+</div>
+
 <div class="modal-actions">
 <button class="btn btn-outline" onclick="closeSiteEditor()">取消</button>
 <button class="btn btn-primary" onclick="saveSiteInfo()">保存</button>
@@ -547,6 +577,11 @@ function openSiteEditor() {
   document.getElementById('editCtaPrimary').value = siteInfo.ctaPrimary || ''
   document.getElementById('editCtaSecondary').value = siteInfo.ctaSecondary || ''
   document.getElementById('editFooter').value = siteInfo.footerText || ''
+  document.getElementById('editIcpRecord').value = siteInfo.icpRecord || ''
+  document.getElementById('editIcpUrl').value = siteInfo.icpUrl || ''
+  document.getElementById('editShowBottom').value = siteInfo.showBottomIcon === false ? 'false' : 'true'
+  document.getElementById('editBottomTitle').value = siteInfo.bottomIconTitle || ''
+  document.getElementById('editBottomUrl').value = siteInfo.bottomIconUrl || ''
 }
 
 function closeSiteEditor() {
@@ -567,7 +602,12 @@ function saveSiteInfo() {
     ctaDesc: document.getElementById('editCtaDesc').value.trim(),
     ctaPrimary: document.getElementById('editCtaPrimary').value.trim(),
     ctaSecondary: document.getElementById('editCtaSecondary').value.trim(),
-    footerText: document.getElementById('editFooter').value.trim()
+    footerText: document.getElementById('editFooter').value.trim(),
+    icpRecord: document.getElementById('editIcpRecord').value.trim(),
+    icpUrl: document.getElementById('editIcpUrl').value.trim(),
+    showBottomIcon: document.getElementById('editShowBottom').value === 'true',
+    bottomIconTitle: document.getElementById('editBottomTitle').value.trim(),
+    bottomIconUrl: document.getElementById('editBottomUrl').value.trim()
   }
   hasChanges = true
   closeSiteEditor()

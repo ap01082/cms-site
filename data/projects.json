@@ -86,6 +86,11 @@
     "ctaDesc": "欢迎在 GitHub 上提交 Issue 或 PR，告诉我们需要适配哪些应用，或者一起参与到 fnOS 的生态建设中来。",
     "ctaPrimary": "浏览所有文档",
     "ctaSecondary": "提交适配建议",
-    "footerText": "© 2026 纪年 版权所有"
+    "footerText": "© 2026 纪年 版权所有",
+    "icpRecord": "",
+    "icpUrl": "",
+    "showBottomIcon": true,
+    "bottomIconTitle": "GitHub",
+    "bottomIconUrl": "https://github.com/ap01082"
   }
 }
