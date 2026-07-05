@@ -10,7 +10,7 @@ export default {
 
   themeConfig: {
     nav: [
-      { text: '后台管理', link: '/admin' }
+      { text: '后台管理', link: '/admin/' }
     ]
   },
 
