@@ -99,10 +99,10 @@ a{color:var(--brand);text-decoration:none}
 </div>
 </div>
 
-<!-- Token Setup (optional - only needed to commit to GitHub) -->
+<!-- Token Setup (required) -->
 <div id="tokenSetup" class="token-area">
-<h2>连接 GitHub（可选）</h2>
-<p>输入 Token 后可将更改提交到 GitHub 仓库，触发自动部署。不连接也能在本地预览编辑。</p>
+<h2>连接 GitHub</h2>
+<p>请先连接 GitHub 才能管理项目内容。修改后的数据会提交到仓库，触发 EdgeOne Pages 自动部署。</p>
 <input type="password" id="tokenInput" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
 <div style="margin-top:14px">
 <button class="btn btn-primary" onclick="connectGitHub()">连接</button>
@@ -215,9 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (ri) ri.value = REPO_NAME
 })
 
-// Init - load from site data immediately, no token needed
-loadLocalData()
-showMain()
+// Init - show token setup first, connect to see project list
 if (token) {
   document.getElementById('tokenInput').value = token
   connectGitHub()
@@ -262,7 +260,9 @@ async function connectGitHub() {
     document.getElementById('statusDot').className = 'status-dot connected'
     document.getElementById('statusText').textContent = `已连接: ${user.login}`
     document.getElementById('tokenSetup').classList.add('hidden')
-    showToast(`已连接: ${user.login}，可提交更改到GitHub`)
+    showMain()
+    showToast(`已连接: ${user.login}，正在加载数据...`)
+    await loadFromGitHub()
   } catch(e) {
     showToast('连接失败: ' + e.message, 'error')
     document.getElementById('statusDot').className = 'status-dot error'
@@ -277,7 +277,11 @@ async function loadFromGitHub() {
       signal: AbortSignal.timeout(10000)
     })
     if (!res.ok) {
-      if (res.status === 404) throw new Error(`仓库 ${REPO_OWNER}/${REPO_NAME} 中没有 ${DATA_PATH} 文件`)
+      if (res.status === 404) {
+        showToast('GitHub 仓库中没有数据文件，已加载本地默认数据', 'error')
+        await loadLocalData()
+        return
+      }
       throw new Error(`加载失败 (${res.status})`)
     }
     const d = await res.json()
