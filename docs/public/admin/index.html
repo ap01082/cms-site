@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>后台管理 - ap01082</title>
+<style>
+:root {
+  --bg:#f8f9fc; --card:#fff; --text:#1a1a2e; --text2:#6b7280;
+  --brand:#4f6ef7; --brand-hover:#3b5de7; --border:#e5e7eb;
+  --danger:#ef4444; --danger-hover:#dc2626; --success:#10b981;
+  --radius:12px; --font: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6}
+a{color:var(--brand);text-decoration:none}
+
+/* Layout */
+.admin-layout{max-width:1200px;margin:0 auto;padding:24px 32px}
+.admin-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.admin-header h1{font-size:22px;font-weight:700}
+.header-actions{display:flex;gap:10px;align-items:center}
+
+/* Buttons */
+.btn{padding:8px 18px;border-radius:8px;font-size:13px;font-weight:600;border:none;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:var(--brand);color:#fff}
+.btn-primary:hover{background:var(--brand-hover)}
+.btn-outline{border:1px solid var(--border);background:var(--card);color:var(--text)}
+.btn-outline:hover{border-color:var(--brand);color:var(--brand)}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-danger:hover{background:var(--danger-hover)}
+.btn-sm{padding:5px 12px;font-size:12px}
+
+/* Status bar */
+.status-bar{display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:8px;margin-bottom:20px;font-size:13px;background:var(--card);border:1px solid var(--border)}
+.status-dot{width:8px;height:8px;border-radius:50%;background:#d1d5db}
+.status-dot.connected{background:var(--success)}
+.status-dot.error{background:var(--danger)}
+
+/* Token input */
+.token-area{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:32px;text-align:center;margin-bottom:24px}
+.token-area h2{font-size:18px;margin-bottom:8px}
+.token-area p{color:var(--text2);font-size:14px;margin-bottom:20px}
+.token-area input{width:100%;max-width:480px;padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-size:14px;text-align:center;font-family:monospace}
+.token-area input:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px rgba(79,110,247,.15)}
+.token-help{font-size:12px;color:var(--text2);margin-top:12px}
+.token-help a{text-decoration:underline}
+
+/* Toolbar */
+.toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.toolbar h2{font-size:17px;font-weight:600}
+
+/* Project list */
+.project-list{display:flex;flex-direction:column;gap:12px}
+.project-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;display:flex;align-items:center;gap:16px;transition:all .2s;cursor:pointer}
+.project-item:hover{border-color:var(--brand);box-shadow:0 2px 8px rgba(79,110,247,.08)}
+.project-item .order{font-size:12px;color:var(--text2);min-width:24px}
+.project-item .icon-preview{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.project-item .icon-preview img{width:28px;height:28px}
+.project-item .info{flex:1;min-width:0}
+.project-item .info .name{font-size:14px;font-weight:600;margin-bottom:2px}
+.project-item .info .meta{font-size:12px;color:var(--text2);display:flex;gap:8px}
+.project-item .item-actions{display:flex;gap:6px;flex-shrink:0}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;z-index:1000;backdrop-filter:blur(2px)}
+.modal{background:var(--card);border-radius:var(--radius);padding:28px;width:90%;max-width:520px;max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.modal h2{font-size:18px;margin-bottom:20px}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:var(--text2)}
+.form-group input,.form-group textarea,.form-group select{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:var(--font)}
+.form-group textarea{min-height:80px;resize:vertical}
+.form-group input:focus,.form-group textarea:focus,.form-group select:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px rgba(79,110,247,.1)}
+.form-row{display:flex;gap:12px}
+.form-row .form-group{flex:1}
+.modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:24px}
+
+/* Toast */
+.toast{position:fixed;bottom:24px;right:24px;padding:12px 20px;border-radius:8px;font-size:13px;font-weight:500;z-index:2000;animation:slideUp .3s ease;box-shadow:0 4px 16px rgba(0,0,0,.15)}
+.toast.success{background:var(--success);color:#fff}
+.toast.error{background:var(--danger);color:#fff}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+.hidden{display:none!important}
+.ml-auto{margin-left:auto}
+</style>
+</head>
+<body>
+
+<div class="admin-layout">
+
+<!-- Header -->
+<div class="admin-header">
+<h1>⚙️ 后台管理</h1>
+<div class="header-actions">
+<span class="status-dot" id="statusDot"></span>
+<span id="statusText" style="font-size:12px;color:var(--text2)">未连接</span>
+<button class="btn btn-outline btn-sm" onclick="location.href='/'">← 返回站点</button>
+</div>
+</div>
+
+<!-- Token Setup (optional - only needed to commit to GitHub) -->
+<div id="tokenSetup" class="token-area">
+<h2>连接 GitHub（可选）</h2>
+<p>输入 Token 后可将更改提交到 GitHub 仓库，触发自动部署。不连接也能在本地预览编辑。</p>
+<input type="password" id="tokenInput" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+<div style="margin-top:14px">
+<button class="btn btn-primary" onclick="connectGitHub()">连接</button>
+</div>
+<div class="token-help">
+需要创建一个 Token？<a href="https://github.com/settings/tokens/new?scopes=repo&description=ap01082%20CMS" target="_blank">点击这里创建</a>
+（勾选 repo 权限即可）
+</div>
+</div>
+
+<!-- Main Content (shown when connected) -->
+<div id="mainContent" class="hidden">
+
+<div class="toolbar">
+<div>
+<h2 style="font-size:17px;font-weight:600;margin-bottom:4px">项目列表 (<span id="projectCount">0</span>)</h2>
+<div style="font-size:12px;color:var(--text2);margin-top:4px">
+  目标仓库: <input type="text" id="repoInput" value="cms-site" style="width:180px;padding:3px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:monospace" onchange="updateRepo()">
+  <span style="color:var(--text2);margin-left:4px">ap01082/</span>
+</div>
+</div>
+<button class="btn btn-primary" onclick="openEditor()">+ 添加项目</button>
+</div>
+
+<div class="project-list" id="projectList"></div>
+
+<div style="margin-top:24px;display:flex;gap:12px">
+<button class="btn btn-primary" onclick="commitChanges()">💾 提交更改到 GitHub</button>
+<button class="btn btn-outline" onclick="loadLocalData()">🔄 重新加载</button>
+<button class="btn btn-outline" onclick="loadFromGitHub()">📡 从GitHub同步</button>
+</div>
+
+</div>
+</div>
+
+<!-- Editor Modal -->
+<div id="editorModal" class="modal-overlay hidden">
+<div class="modal">
+<h2 id="modalTitle">添加项目</h2>
+
+<div class="form-row">
+<div class="form-group">
+<label>项目名称 *</label>
+<input type="text" id="editTitle" placeholder="项目名称">
+</div>
+<div class="form-group">
+<label>仓库名 *</label>
+<input type="text" id="editRepo" placeholder="ap01082/project-name">
+</div>
+</div>
+
+<div class="form-group">
+<label>项目描述 *</label>
+<textarea id="editDesc" placeholder="项目描述..."></textarea>
+</div>
+
+<div class="form-row">
+<div class="form-group">
+<label>图标名称</label>
+<select id="editIcon">
+<option value="tunnel">Tunnel</option><option value="pichub">PicHub</option>
+<option value="pdd">PDD</option><option value="fpk">FPK</option>
+<option value="docker">Docker</option><option value="danmu">Danmu</option>
+</select>
+</div>
+<div class="form-group">
+<label>图标颜色</label>
+<input type="color" id="editColor" value="#4f6ef7" style="height:40px;padding:4px">
+</div>
+</div>
+
+<div class="form-row">
+<div class="form-group">
+<label>标签（逗号分隔）</label>
+<input type="text" id="editTags" placeholder="Vue, JavaScript">
+</div>
+<div class="form-group">
+<label>Star 数</label>
+<input type="number" id="editStars" value="0" min="0">
+</div>
+</div>
+
+<div class="modal-actions">
+<button class="btn btn-outline" onclick="closeEditor()">取消</button>
+<button class="btn btn-danger btn-sm" id="deleteBtn" onclick="deleteProject()">删除</button>
+<button class="btn btn-primary" onclick="saveProject()">保存</button>
+</div>
+</div>
+</div>
+
+<script>
+// State
+let token = localStorage.getItem('gh_token') || ''
+let projects = []
+let hasChanges = false
+let editingIndex = -1
+const REPO_OWNER = 'ap01082'
+let REPO_NAME = localStorage.getItem('cms_repo') || 'tunnel-manager'
+const DATA_PATH = 'data/projects.json'
+
+function updateRepo() {
+  REPO_NAME = document.getElementById('repoInput').value.trim() || 'tunnel-manager'
+  localStorage.setItem('cms_repo', REPO_NAME)
+  showToast('目标仓库已更新: ' + REPO_OWNER + '/' + REPO_NAME)
+}
+
+// Init repo input with saved value
+document.addEventListener('DOMContentLoaded', () => {
+  const ri = document.getElementById('repoInput')
+  if (ri) ri.value = REPO_NAME
+})
+
+// Init - load from site data immediately, no token needed
+loadLocalData()
+showMain()
+if (token) {
+  document.getElementById('tokenInput').value = token
+  connectGitHub()
+}
+
+async function loadLocalData() {
+  try {
+    const res = await fetch('/data/projects.json')
+    if (!res.ok) return showToast('本地数据加载失败', 'error')
+    const data = await res.json()
+    projects = data.projects || []
+    hasChanges = false
+    renderProjects()
+  } catch(e) {
+    showToast('数据加载失败: ' + e.message, 'error')
+  }
+}
+
+function showMain() {
+  document.getElementById('mainContent').classList.remove('hidden')
+}
+
+async function connectGitHub() {
+  const t = document.getElementById('tokenInput').value.trim()
+  if (!t) return showToast('请输入Token', 'error')
+  token = t
+  localStorage.setItem('gh_token', t)
+
+  try {
+    const res = await fetch('https://api.github.com/user', {
+      headers: { Authorization: `Bearer ${t}` },
+      signal: AbortSignal.timeout(10000)
+    })
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}))
+      let msg = `Token验证失败 (${res.status})`
+      if (res.status === 401) msg = 'Token 无效或已过期，请检查是否使用的是 Classic Token（非 Fine-grained）'
+      if (res.status === 403) msg = 'Token 权限不足，请确保勾选了 repo 权限'
+      throw new Error(msg)
+    }
+    const user = await res.json()
+    document.getElementById('statusDot').className = 'status-dot connected'
+    document.getElementById('statusText').textContent = `已连接: ${user.login}`
+    document.getElementById('tokenSetup').classList.add('hidden')
+    showToast(`已连接: ${user.login}，可提交更改到GitHub`)
+  } catch(e) {
+    showToast('连接失败: ' + e.message, 'error')
+    document.getElementById('statusDot').className = 'status-dot error'
+  }
+}
+
+async function loadFromGitHub() {
+  if (!token) return showToast('请先连接 GitHub', 'error')
+  try {
+    const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${DATA_PATH}`, {
+      headers: { Authorization: `Bearer ${token}` },
+      signal: AbortSignal.timeout(10000)
+    })
+    if (!res.ok) {
+      if (res.status === 404) throw new Error(`仓库 ${REPO_OWNER}/${REPO_NAME} 中没有 ${DATA_PATH} 文件`)
+      throw new Error(`加载失败 (${res.status})`)
+    }
+    const d = await res.json()
+    const content = JSON.parse(atob(d.content))
+    projects = content.projects || []
+    hasChanges = false
+    renderProjects()
+    showToast('已从GitHub加载数据')
+  } catch(e) {
+    showToast('加载失败: ' + e.message, 'error')
+  }
+}
+
+async function commitChanges() {
+  if (!token) return showToast('请先连接 GitHub 才能提交更改', 'error')
+  if (!hasChanges) return showToast('没有需要提交的更改')
+
+  const content = JSON.stringify({ projects }, null, 2)
+  try {
+    // Get current file to get SHA
+    let sha = ''
+    const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${DATA_PATH}`, {
+      headers: { Authorization: `Bearer ${token}` },
+      signal: AbortSignal.timeout(10000)
+    })
+    if (res.ok) {
+      const d = await res.json()
+      sha = d.sha
+    } else if (res.status !== 404) {
+      throw new Error(`读取文件失败 (${res.status})`)
+    }
+
+    const body = {
+      message: '📝 更新项目数据 (CMS)',
+      content: btoa(unescape(encodeURIComponent(content))),
+      sha: sha || undefined
+    }
+
+    const putRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${DATA_PATH}`, {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body),
+      signal: AbortSignal.timeout(15000)
+    })
+
+    if (!putRes.ok) {
+      const err = await putRes.json().catch(() => ({}))
+      throw new Error(err.message || `提交失败 (${putRes.status})`)
+    }
+    hasChanges = false
+    showToast('✅ 已提交到GitHub！EdgeOne Pages将自动重新部署', 'success')
+  } catch(e) {
+    showToast('提交失败: ' + e.message, 'error')
+  }
+}
+
+function renderProjects() {
+  const count = document.getElementById('projectCount')
+  if (count) count.textContent = projects.length
+  const list = document.getElementById('projectList')
+  list.innerHTML = projects.map((p, i) => `
+    <div class="project-item" onclick="openEditor(${i})">
+      <span class="order">#${i + 1}</span>
+      <div class="icon-preview" style="background:${p.iconColor || '#4f6ef7'}">
+        <img src="/icons/${p.icon || 'tunnel'}.svg" alt="" onerror="this.style.display='none'">
+      </div>
+      <div class="info">
+        <div class="name">${p.title}</div>
+        <div class="meta">
+          <span>${p.repo}</span>
+          ${p.tags ? p.tags.map(t => `<span style="background:#f3f4f6;padding:1px 7px;border-radius:4px">${t}</span>`).join('') : ''}
+          ${p.stars ? `<span>⭐ ${p.stars}</span>` : ''}
+        </div>
+      </div>
+      <div class="item-actions" onclick="event.stopPropagation()">
+        <button class="btn btn-outline btn-sm" onclick="openEditor(${i})">编辑</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteProject(${i})">删除</button>
+      </div>
+    </div>
+  `).join('')
+}
+
+function openEditor(index = -1) {
+  editingIndex = index
+  document.getElementById('editorModal').classList.remove('hidden')
+  document.getElementById('modalTitle').textContent = index >= 0 ? '编辑项目' : '添加项目'
+  document.getElementById('deleteBtn').classList.toggle('hidden', index < 0)
+
+  if (index >= 0) {
+    const p = projects[index]
+    document.getElementById('editTitle').value = p.title || ''
+    document.getElementById('editRepo').value = p.repo || ''
+    document.getElementById('editDesc').value = p.description || ''
+    document.getElementById('editIcon').value = p.icon || 'tunnel'
+    document.getElementById('editColor').value = p.iconColor || '#4f6ef7'
+    document.getElementById('editTags').value = (p.tags || []).join(', ')
+    document.getElementById('editStars').value = p.stars || 0
+  } else {
+    ['editTitle','editRepo','editDesc'].forEach(id => document.getElementById(id).value = '')
+    document.getElementById('editIcon').value = 'tunnel'
+    document.getElementById('editColor').value = '#4f6ef7'
+    document.getElementById('editTags').value = ''
+    document.getElementById('editStars').value = '0'
+  }
+}
+
+function closeEditor() {
+  document.getElementById('editorModal').classList.add('hidden')
+}
+
+function saveProject() {
+  const data = {
+    id: (document.getElementById('editTitle').value || 'project').toLowerCase().replace(/\s+/g, '-'),
+    title: document.getElementById('editTitle').value.trim(),
+    description: document.getElementById('editDesc').value.trim(),
+    icon: document.getElementById('editIcon').value,
+    iconColor: document.getElementById('editColor').value,
+    tags: document.getElementById('editTags').value.split(',').map(t => t.trim()).filter(Boolean),
+    stars: parseInt(document.getElementById('editStars').value) || 0,
+    repo: document.getElementById('editRepo').value.trim(),
+    featured: true,
+    order: editingIndex >= 0 ? projects[editingIndex].order : projects.length + 1
+  }
+
+  if (!data.title || !data.repo) return showToast('请填写项目名称和仓库名', 'error')
+
+  if (editingIndex >= 0) {
+    data.id = projects[editingIndex].id
+    data.order = projects[editingIndex].order
+    projects[editingIndex] = data
+  } else {
+    projects.push(data)
+  }
+
+  hasChanges = true
+  renderProjects()
+  closeEditor()
+  showToast('已保存（本地），点击"提交更改到GitHub"生效')
+}
+
+function deleteProject(index) {
+  if (index == null || index < 0) return
+  if (!confirm(`确定要删除「${projects[index].title}」吗？`)) return
+
+  projects.splice(index, 1)
+  hasChanges = true
+  renderProjects()
+  closeEditor()
+  showToast('已删除（本地），点击"提交更改到GitHub"生效')
+}
+
+function showToast(msg, type = 'success') {
+  const t = document.createElement('div')
+  t.className = `toast ${type}`
+  t.textContent = msg
+  document.body.appendChild(t)
+  setTimeout(() => t.remove(), 3000)
+}
+
+// Click outside modal to close
+document.getElementById('editorModal').addEventListener('click', function(e) {
+  if (e.target === this) closeEditor()
+})
+</script>
+
+</body>
+</html>

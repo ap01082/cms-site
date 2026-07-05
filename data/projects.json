@@ -1,0 +1,91 @@
+{
+  "projects": [
+    {
+      "id": "tunnel-manager",
+      "title": "Tunnel Manager",
+      "description": "一站式内网穿透与DNS管理工具。支持Cloudflare Tunnel / DNS / EdgeOne / DNSPod，提供飞牛OS FPK一键部署。",
+      "icon": "tunnel",
+      "iconColor": "#10B981",
+      "tags": ["Vue"],
+      "stars": 1,
+      "repo": "ap01082/tunnel-manager",
+      "featured": true,
+      "order": 1
+    },
+    {
+      "id": "pichub",
+      "title": "PicHub",
+      "description": "为fnOS设计的自托管图床。拖拽上传、多格式分享、相册管理，支持S3/七牛/阿里云OSS/腾讯云COS云存储。",
+      "icon": "pichub",
+      "iconColor": "#3B82F6",
+      "tags": ["JavaScript"],
+      "stars": 0,
+      "repo": "ap01082/pichub",
+      "featured": true,
+      "order": 2
+    },
+    {
+      "id": "pdd-agent",
+      "title": "PDD-agent",
+      "description": "拼多多AI客服助手，基于Docker部署的智能客服解决方案。支持自动化回复、多会话管理、一键部署。",
+      "icon": "pdd",
+      "iconColor": "#F97316",
+      "tags": ["Python"],
+      "stars": 4,
+      "repo": "ap01082/PDD-agent",
+      "featured": true,
+      "order": 3
+    },
+    {
+      "id": "tunnel-manager-fpk",
+      "title": "Tunnel Manager FPK",
+      "description": "穿透助手飞牛OS FPK安装包版本，专为fnOS用户打造的一键部署内网穿透工具。",
+      "icon": "fpk",
+      "iconColor": "#8B5CF6",
+      "tags": ["Vue"],
+      "stars": 0,
+      "repo": "ap01082/tunnel-manager-fpk",
+      "featured": true,
+      "order": 4
+    },
+    {
+      "id": "docker-proxy",
+      "title": "Docker Proxy",
+      "description": "Docker镜像代理加速工具，解决国内网络环境下Docker Hub拉取镜像慢的问题。",
+      "icon": "docker",
+      "iconColor": "#1D63ED",
+      "tags": ["JavaScript"],
+      "stars": 0,
+      "repo": "ap01082/docker-proxy",
+      "featured": true,
+      "order": 5
+    },
+    {
+      "id": "danmu-api",
+      "title": "Danmu API",
+      "description": "弹幕数据采集与分析API服务，支持多平台弹幕实时获取与数据清洗处理。",
+      "icon": "danmu",
+      "iconColor": "#EC4899",
+      "tags": ["JavaScript"],
+      "stars": 0,
+      "repo": "ap01082/danmu_api-c91f0",
+      "featured": true,
+      "order": 6
+    }
+  ],
+  "siteInfo": {
+    "titleBefore": "为 fnOS 打造的",
+    "titleGradient": "原生应用生态",
+    "subtitle": "这里是开发者纪年维护的 fnOS 原生应用适配文档库。我们致力于为飞牛私有云（fnOS）用户提供体验更佳、集成度更高的原生应用解决方案。",
+    "primaryButton": "开始浏览文档",
+    "secondaryButton": "访问 GitHub",
+    "githubUrl": "https://github.com/ap01082",
+    "sectionTitle": "已适配应用",
+    "moreProjects": "查看更多项目",
+    "ctaTitle": "想要适配更多应用？",
+    "ctaDesc": "欢迎在 GitHub 上提交 Issue 或 PR，告诉我们需要适配哪些应用，或者一起参与到 fnOS 的生态建设中来。",
+    "ctaPrimary": "浏览所有文档",
+    "ctaSecondary": "提交适配建议",
+    "footerText": "© 2026 纪年 版权所有"
+  }
+}

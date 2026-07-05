@@ -1,0 +1,5 @@
+node_modules
+.edgeone
+docs/.vitepress/dist
+docs/.vitepress/cache
+.git

@@ -1,0 +1,5 @@
+{
+  "outputDirectory": "docs/.vitepress/dist",
+  "framework": "static",
+  "buildCommand": ""
+}
