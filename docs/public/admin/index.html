@@ -386,6 +386,10 @@ async function connectGitHub() {
   }
 }
 
+function decodeBase64(str) {
+  return decodeURIComponent(escape(atob(str.replace(/\s/g, ''))))
+}
+
 async function loadFromGitHub() {
   if (!token) return showToast('请先连接 GitHub', 'error')
   try {
@@ -402,7 +406,7 @@ async function loadFromGitHub() {
       throw new Error(`加载失败 (${res.status})`)
     }
     const d = await res.json()
-    const content = JSON.parse(atob(d.content))
+    const content = JSON.parse(decodeBase64(d.content))
     projects = content.projects || []
     siteInfo = content.siteInfo || {}
     hasChanges = false
